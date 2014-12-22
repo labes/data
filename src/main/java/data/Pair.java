@@ -43,4 +43,12 @@ public class Pair<L, R> {
     public Pair<R, L> flip() {
         return new Pair<>(right, left);
     }
+
+    public <LT> Pair<LT, R> mapLeft(Function<? super L, ? extends LT> leftMapper) {
+        return new Pair<>(leftMapper.apply(left), right);
+    }
+
+    public <RT> Pair<L, RT> mapRight(Function<? super R, ? extends RT> rightMapper) {
+        return new Pair<>(left, rightMapper.apply(right));
+    }
 }
