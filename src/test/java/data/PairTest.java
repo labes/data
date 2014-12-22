@@ -19,4 +19,14 @@ public class PairTest {
     public void rightReturnsTheRightComponent() {
         Assert.assertEquals(RIGHT, pair.right());
     }
+
+    @Test
+    public void ofLeftReturnsAPartiallyBuiltPairWhichContainsTheGivenElementOnTheLeft() {
+        Assert.assertEquals(LEFT, Pair.ofLeft(LEFT).apply(RIGHT).left());
+    }
+
+    @Test
+    public void ofRightReturnsAPartiallyBuiltPairWhichContainsTheGivenElementOnTheRight() {
+        Assert.assertEquals(RIGHT, Pair.ofRight(RIGHT).apply(LEFT).right());
+    }
 }

@@ -1,5 +1,7 @@
 package data;
 
+import java.util.function.Function;
+
 public class Pair<L, R> {
 
     private final L left;
@@ -12,6 +14,14 @@ public class Pair<L, R> {
 
     public static <L, R> Pair<L, R> of(L left, R right) {
         return new Pair<>(left, right);
+    }
+
+    public static <L, R> Function<R, Pair<L, R>> ofLeft(L left) {
+        return right -> new Pair<>(left, right);
+    }
+
+    public static <L, R> Function<L, Pair<L, R>> ofRight(R right) {
+        return left -> new Pair<>(left, right);
     }
 
     public L left() {
