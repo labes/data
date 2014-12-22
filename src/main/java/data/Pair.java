@@ -31,4 +31,16 @@ public class Pair<L, R> {
     public R right() {
         return right;
     }
+
+    public <LT> Pair<LT, R> withLeft(LT left) {
+        return new Pair<>(left, right);
+    }
+
+    public <RT> Pair<L, RT> withRight(RT right) {
+        return new Pair<>(left, right);
+    }
+
+    public Pair<R, L> flip() {
+        return new Pair<>(right, left);
+    }
 }
