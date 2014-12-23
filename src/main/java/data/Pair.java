@@ -65,6 +65,11 @@ public class Pair<L, R> {
         return former.left != null || latter.right != null ? new Pair<>(former.left, latter.right) : new Pair<>(latter.left, former.right);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <L, R> Pair<L, R> narrow(Pair<? extends L, ? extends R> pair) {
+        return (Pair<L, R>) pair;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (object == this) {
