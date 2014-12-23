@@ -162,4 +162,32 @@ public class PairTest {
             throw new IllegalStateException();
         });
     }
+
+    @Test
+    public void pairsAreEqualWhenBothTheirLeftAndRightComponentsAreRespectivelyEqual() {
+        final Pair one = Pair.of(LEFT, RIGHT);
+        final Pair other = Pair.of(LEFT, RIGHT);
+        Assert.assertTrue(one.equals(other));
+    }
+
+    @Test
+    public void pairsAreNotEqualWhenLeftComponentsAreNotEqual() {
+        final Pair one = Pair.of(new Object(), RIGHT);
+        final Pair other = Pair.of(new Object(), RIGHT);
+        Assert.assertFalse(one.equals(other));
+    }
+
+    @Test
+    public void pairsAreNotEqualWhenRightComponentsAreNotEqual() {
+        final Pair one = Pair.of(LEFT, new Object());
+        final Pair other = Pair.of(RIGHT, new Object());
+        Assert.assertFalse(one.equals(other));
+    }
+
+    @Test
+    public void pairsOfNullValuesAreEqual() {
+        final Pair one = Pair.of(null, null);
+        final Pair other = Pair.of(null, null);
+        Assert.assertTrue(one.equals(other));
+    }
 }

@@ -1,5 +1,6 @@
 package data;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -62,5 +63,27 @@ public class Pair<L, R> {
 
     private static <L, R> Pair<L, R> merge(Pair<L, R> former, Pair<L, R> latter) {
         return former.left != null || latter.right != null ? new Pair<>(former.left, latter.right) : new Pair<>(latter.left, former.right);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof Pair)) {
+            return false;
+        }
+        final Pair<?, ?> other = (Pair<?, ?>) object;
+        return Objects.equals(left, other.left) && Objects.equals(right, other.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(left) ^ Objects.hashCode(right);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + left + ',' + right + ')';
     }
 }
