@@ -108,4 +108,58 @@ public class PairTest {
         final Pair mappedPair = pair.mapRight(right -> null);
         Assert.assertEquals(LEFT, mappedPair.left());
     }
+
+    @Test
+    public void mapPassesTheLeftComponentToTheLeftMapper() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        pair.map(capture::getAndSet, right -> null);
+        Assert.assertEquals(LEFT, capture.get());
+    }
+
+    @Test
+    public void mapPassesTheRightComponentToTheRightMapper() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        pair.map(left -> null, capture::getAndSet);
+        Assert.assertEquals(RIGHT, capture.get());
+    }
+
+    @Test
+    public void mapReplacesTheLeftComponentWithTheOneReturnedByTheLeftMapper() {
+        final Object mappedLeft = new Object();
+        final Pair mappedPair = pair.map(left -> mappedLeft, right -> null);
+        Assert.assertEquals(mappedLeft, mappedPair.left());
+    }
+
+    @Test
+    public void mapReplacesTheRightComponentWithTheOneReturnedByTheRightMapper() {
+        final Object mappedRight = new Object();
+        final Pair mappedPair = pair.map(left -> null, right -> mappedRight);
+        Assert.assertEquals(mappedRight, mappedPair.right());
+    }
+
+    @Test
+    public void mapLeftMapperCanReturnNull() {
+        final Pair mappedPair = pair.map(left -> null, right -> null);
+        Assert.assertNull(mappedPair.left());
+    }
+
+    @Test
+    public void mapRightMapperCanReturnNull() {
+        final Pair mappedPair = pair.map(left -> null, right -> null);
+        Assert.assertNull(mappedPair.right());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void mapPropagatesTheExceptionThrownByTheLeftMapper() {
+        pair.map(left -> {
+            throw new IllegalStateException();
+        }, right -> null);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void mapPropagatesTheExceptionThrownByTheRightMapper() {
+        pair.map(left -> null, right -> {
+            throw new IllegalStateException();
+        });
+    }
 }

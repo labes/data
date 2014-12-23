@@ -1,6 +1,8 @@
 package data;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class Pair<L, R> {
 
@@ -50,5 +52,15 @@ public class Pair<L, R> {
 
     public <RT> Pair<L, RT> mapRight(Function<? super R, ? extends RT> rightMapper) {
         return new Pair<>(left, rightMapper.apply(right));
+    }
+
+    public <LT, RT> Pair<LT, RT> map(Function<? super L, ? extends LT> leftMapper, Function<? super R, ? extends RT> rightMapper) {
+        final Supplier<Pair<LT, RT>> leftProjection = () -> new Pair<>(leftMapper.apply(left), null);
+        final Supplier<Pair<LT, RT>> rightProjection = () -> new Pair<>(null, rightMapper.apply(right));
+        return Stream.of(leftProjection, rightProjection).parallel().map(Supplier::get).reduce(Pair::merge).get();
+    }
+
+    private static <L, R> Pair<L, R> merge(Pair<L, R> former, Pair<L, R> latter) {
+        return former.left != null || latter.right != null ? new Pair<>(former.left, latter.right) : new Pair<>(latter.left, former.right);
     }
 }
