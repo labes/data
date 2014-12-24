@@ -18,6 +18,10 @@ public abstract class Either<L, R> {
 
     public abstract <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight);
 
+    public abstract <T> Either<L, T> map(Function<? super R, ? extends T> mapper);
+
+    public abstract <T> Either<L, T> flatMap(Function<? super R, ? extends Either<? extends L, ? extends T>> mapper);
+
     private static class Left<L, R> extends Either<L, R> {
 
         private final L left;
@@ -29,6 +33,18 @@ public abstract class Either<L, R> {
         @Override
         public <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight) {
             return onLeft.apply(left);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> Either<L, T> map(Function<? super R, ? extends T> mapper) {
+            return (Left<L, T>) this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> Either<L, T> flatMap(Function<? super R, ? extends Either<? extends L, ? extends T>> mapper) {
+            return (Left<L, T>) this;
         }
 
         @Override
@@ -65,6 +81,17 @@ public abstract class Either<L, R> {
         @Override
         public <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight) {
             return onRight.apply(right);
+        }
+
+        @Override
+        public <T> Either<L, T> map(Function<? super R, ? extends T> mapper) {
+            return new Right<>(mapper.apply(right));
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> Either<L, T> flatMap(Function<? super R, ? extends Either<? extends L, ? extends T>> mapper) {
+            return (Either<L, T>) mapper.apply(right);
         }
 
         @Override

@@ -8,8 +8,8 @@ public class EitherTest {
 
     private static final Object VALUE = new Object();
 
-    private final Either left = Either.left(VALUE);
-    private final Either right = Either.right(VALUE);
+    private final Either<Object, Object> left = Either.left(VALUE);
+    private final Either<Object, Object> right = Either.right(VALUE);
 
     @Test
     public void foldOnLeftPassesTheValueToTheLeftMapper() {
@@ -35,6 +35,50 @@ public class EitherTest {
     public void foldOnRightReturnsTheResultOfTheRightMapper() {
         final Object result = new Object();
         Assert.assertEquals(result, right.fold(null, value -> result));
+    }
+
+    @Test
+    public void mapOnLeftDoesNotApplyTheMapper() {
+        left.map(null);
+    }
+
+    @Test
+    public void mapOnRightPassesTheValueToTheMapper() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        right.map(capture::getAndSet);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void mapOnLeftLeavesTheComponentUnchanged() {
+        Assert.assertEquals(left, left.map(value -> null));
+    }
+
+    @Test
+    public void mapOnRightReplacesTheRightComponentWithTheOneReturnedByTheMapper() {
+        final Object mappedValue = new Object();
+        Assert.assertEquals(Either.right(mappedValue), right.map(value -> mappedValue));
+    }
+
+    @Test
+    public void flatMapOnLeftLeavesTheComponentUnchanged() {
+        Assert.assertEquals(left, left.flatMap(null));
+    }
+
+    @Test
+    public void flatMapOnRightPassesTheValueToTheMapper() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        right.flatMap(value -> {
+            capture.set(value);
+            return null;
+        });
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void flatMapOnRightReturnsTheEitherReturnedByTheMapper() {
+        final Either<Object, Object> result = Either.right(new Object());
+        Assert.assertEquals(result, right.flatMap(value -> result));
     }
 
     @Test
