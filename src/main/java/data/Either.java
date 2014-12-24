@@ -1,5 +1,6 @@
 package data;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 public abstract class Either<L, R> {
@@ -29,6 +30,28 @@ public abstract class Either<L, R> {
         public <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight) {
             return onLeft.apply(left);
         }
+
+        @Override
+        public boolean equals(Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (!(object instanceof Left)) {
+                return false;
+            }
+            final Left<?, ?> other = (Left<?, ?>) object;
+            return Objects.equals(left, other.left);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(left);
+        }
+
+        @Override
+        public String toString() {
+            return "Left " + left;
+        }
     }
 
     private static class Right<L, R> extends Either<L, R> {
@@ -42,6 +65,28 @@ public abstract class Either<L, R> {
         @Override
         public <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight) {
             return onRight.apply(right);
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (!(object instanceof Right)) {
+                return false;
+            }
+            final Right<?, ?> other = (Right<?, ?>) object;
+            return Objects.equals(right, other.right);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(right);
+        }
+
+        @Override
+        public String toString() {
+            return "Right " + right;
         }
     }
 }
