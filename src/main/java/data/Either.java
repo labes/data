@@ -22,6 +22,11 @@ public abstract class Either<L, R> {
 
     public abstract <T> Either<L, T> flatMap(Function<? super R, ? extends Either<? extends L, ? extends T>> mapper);
 
+    @SuppressWarnings("unchecked")
+    public static <L, R> Either<L, R> join(Either<? extends L, ? extends Either<? extends L, ? extends R>> either) {
+        return either.fold(left -> (Either<L, R>) either, right -> (Either<L, R>) right);
+    }
+
     private static class Left<L, R> extends Either<L, R> {
 
         private final L left;

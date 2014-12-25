@@ -82,6 +82,20 @@ public class EitherTest {
     }
 
     @Test
+    public void joinOnLeftReturnsTheOuterEither() {
+        final Object value = new Object();
+        final Either<Object, Either<Object, Object>> outer = Either.left(value);
+        Assert.assertEquals(Either.left(value), Either.join(outer));
+    }
+
+    @Test
+    public void joinOnRightReturnsTheInnerEither() {
+        final Either<Object, Object> inner = Either.left(new Object());
+        final Either<Object, Either<Object, Object>> outer = Either.right(inner);
+        Assert.assertEquals(inner, Either.join(outer));
+    }
+
+    @Test
     public void leftsAreEqualWhenContainingTheSameValue() {
         final Either one = Either.left(VALUE);
         final Either other = Either.left(VALUE);
