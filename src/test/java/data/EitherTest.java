@@ -38,6 +38,36 @@ public class EitherTest {
     }
 
     @Test
+    public void isLeftOnLeftReturnsTrue() {
+        Assert.assertTrue(left.isLeft());
+    }
+
+    @Test
+    public void isLeftOnRightReturnsFalse() {
+        Assert.assertFalse(right.isLeft());
+    }
+
+    @Test
+    public void isRightOnRightReturnsTrue() {
+        Assert.assertTrue(right.isRight());
+    }
+
+    @Test
+    public void isRightOnLeftReturnsFalse() {
+        Assert.assertFalse(left.isRight());
+    }
+
+    @Test
+    public void flipOnLeftReturnsRightWithSameValue() {
+        Assert.assertEquals(right, left.flip());
+    }
+
+    @Test
+    public void flipOnRightReturnsLeftWithSameValue() {
+        Assert.assertEquals(left, right.flip());
+    }
+
+    @Test
     public void mapOnLeftDoesNotApplyTheMapper() {
         left.map(null);
     }

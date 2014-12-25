@@ -18,6 +18,12 @@ public abstract class Either<L, R> {
 
     public abstract <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight);
 
+    public abstract boolean isLeft();
+
+    public abstract boolean isRight();
+
+    public abstract Either<R, L> flip();
+
     public abstract <T> Either<L, T> map(Function<? super R, ? extends T> mapper);
 
     public abstract <T> Either<L, T> flatMap(Function<? super R, ? extends Either<? extends L, ? extends T>> mapper);
@@ -38,6 +44,21 @@ public abstract class Either<L, R> {
         @Override
         public <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight) {
             return onLeft.apply(left);
+        }
+
+        @Override
+        public boolean isLeft() {
+            return true;
+        }
+
+        @Override
+        public boolean isRight() {
+            return false;
+        }
+
+        @Override
+        public Either<R, L> flip() {
+            return new Right<>(left);
         }
 
         @Override
@@ -86,6 +107,21 @@ public abstract class Either<L, R> {
         @Override
         public <T> T fold(Function<? super L, ? extends T> onLeft, Function<? super R, ? extends T> onRight) {
             return onRight.apply(right);
+        }
+
+        @Override
+        public boolean isLeft() {
+            return false;
+        }
+
+        @Override
+        public boolean isRight() {
+            return true;
+        }
+
+        @Override
+        public Either<R, L> flip() {
+            return new Left<>(right);
         }
 
         @Override
