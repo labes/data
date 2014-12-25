@@ -33,6 +33,10 @@ public abstract class Either<L, R> {
         return either.fold(left -> (Either<L, R>) either, right -> (Either<L, R>) right);
     }
 
+    public static <T> T forget(Either<? extends T, ? extends T> either) {
+        return either.fold(Function.<T>identity(), Function.<T>identity());
+    }
+
     private static class Left<L, R> extends Either<L, R> {
 
         private final L left;

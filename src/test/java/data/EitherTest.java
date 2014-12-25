@@ -126,6 +126,16 @@ public class EitherTest {
     }
 
     @Test
+    public void forgetOnLeftReturnsTheContainedValue() {
+        Assert.assertEquals(VALUE, Either.forget(left));
+    }
+
+    @Test
+    public void forgetOnRightReturnsTheContainedValue() {
+        Assert.assertEquals(VALUE, Either.forget(right));
+    }
+
+    @Test
     public void leftsAreEqualWhenContainingTheSameValue() {
         final Either one = Either.left(VALUE);
         final Either other = Either.left(VALUE);
