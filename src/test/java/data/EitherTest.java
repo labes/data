@@ -136,6 +136,99 @@ public class EitherTest {
     }
 
     @Test
+    public void composedFunctionPassesTheArgumentToTheFirstFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Either.compose(value -> {
+            capture.set(value);
+            return right;
+        }, value -> null).apply(VALUE);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void composedFunctionDoesNotApplyTheLatterOneWhenTheResultOfTheFormerFunctionIsLeft() {
+        Either.compose(value -> left, value -> {
+            throw new IllegalStateException();
+        }).apply(new Object());
+    }
+
+    @Test
+    public void composedFunctionAppliesToTheLatterOneTheResultContainedByTheRightReturnedByTheFormerFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Either.compose(value -> right, value -> {
+            capture.set(value);
+            return null;
+        }).apply(new Object());
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void composedFunctionReturnsTheResultOfTheFormerFunctionWhenItIsLeft() {
+        Assert.assertEquals(left, Either.compose(value -> left, value -> right).apply(new Object()));
+    }
+
+    @Test
+    public void composedFunctionReturnsTheResultOfTheLatterOneWhenTheResultOfTheFormerFunctionIsRight() {
+        Assert.assertEquals(left, Either.compose(value -> right, value -> left).apply(new Object()));
+    }
+
+    @Test
+    public void liftedFunctionOnLeftDoesNotApplyThePureFunction() {
+        Either.lift(value -> {
+            throw new IllegalStateException();
+        }).apply(left);
+    }
+
+    @Test
+    public void liftedFunctionOnRightPassesItsArgumentToThePureFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Either.lift(capture::getAndSet).apply(right);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void liftedFunctionOnLeftReturnsTheLeftItself() {
+        Assert.assertEquals(left, Either.lift(value -> null).apply(left));
+    }
+
+    @Test
+    public void liftedFunctionOnRightReturnsTheResultOnRight() {
+        final Object result = new Object();
+        Assert.assertEquals(Either.right(result), Either.lift(value -> result).apply(right));
+    }
+
+    @Test
+    public void applicativeOnLeftReturnsAFunctionThatAlwaysReturnsTheLeftValue() {
+        final Object value = new Object();
+        Assert.assertEquals(Either.left(value), Either.applicative(Either.left(value)).apply(right));
+    }
+
+    @Test
+    public void applicativeOnRightReturnsAFunctionThatOnLeftDoesNotApplyThePureFunction() {
+        Either.applicative(Either.right(value -> {
+            throw new IllegalStateException();
+        })).apply(left);
+    }
+
+    @Test
+    public void applicativeOnRightReturnsAFunctionThatOnRightAppliesTheRightComponentToThePureFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Either.applicative(Either.right(capture::getAndSet)).apply(right);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void applicativeOnRightReturnsAFunctionThatOnLeftReturnsTheLeftPassedAsArgument() {
+        Assert.assertEquals(left, Either.applicative(Either.right(value -> null)).apply(left));
+    }
+
+    @Test
+    public void applicativeOnRightReturnsAFunctionThatOnRightReturnsThePureFunctionResultOnTheRight() {
+        final Object result = new Object();
+        Assert.assertEquals(Either.right(result), Either.applicative(Either.right(value -> result)).apply(right));
+    }
+
+    @Test
     public void leftsAreEqualWhenContainingTheSameValue() {
         final Either one = Either.left(VALUE);
         final Either other = Either.left(VALUE);

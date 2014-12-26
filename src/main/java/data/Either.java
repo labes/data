@@ -37,6 +37,19 @@ public abstract class Either<L, R> {
         return either.fold(Function.<T>identity(), Function.<T>identity());
     }
 
+    @SuppressWarnings("unchecked")
+    public static <L, R, S, T> Function<R, Either<L, T>> compose(Function<? super R, ? extends Either<? extends L, ? extends S>> former, Function<? super S, ? extends Either<? extends L, ? extends T>> latter) {
+        return right -> ((Either<L, S>) former.apply(right)).flatMap(latter);
+    }
+
+    public static <L, R, T> Function<Either<L, R>, Either<L, T>> lift(Function<? super R, ? extends T> function) {
+        return either -> either.map(function);
+    }
+
+    public static <L, R, T> Function<Either<L, R>, Either<L, T>> applicative(Either<L, ? extends Function<? super R, ? extends T>> function) {
+        return either -> function.flatMap(either::map);
+    }
+
     private static class Left<L, R> extends Either<L, R> {
 
         private final L left;
