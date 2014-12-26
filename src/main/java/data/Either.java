@@ -50,6 +50,11 @@ public abstract class Either<L, R> {
         return either -> function.flatMap(either::map);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <L, R> Either<L, R> narrow(Either<? extends L, ? extends R> either) {
+        return (Either<L, R>) either;
+    }
+
     private static class Left<L, R> extends Either<L, R> {
 
         private final L left;
