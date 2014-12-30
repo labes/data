@@ -50,6 +50,11 @@ public abstract class Maybe<T> {
         return maybe -> function.flatMap(maybe::map);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Maybe<T> narrow(Maybe<? extends T> maybe) {
+        return (Maybe<T>) maybe;
+    }
+
     private static class Just<T> extends Maybe<T> {
 
         private final T value;
