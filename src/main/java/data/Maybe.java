@@ -38,6 +38,18 @@ public abstract class Maybe<T> {
         return maybe.flatMap(Function.<Maybe<? extends T>>identity());
     }
 
+    public static <T, S, R> Function<T, Maybe<R>> compose(Function<? super T, ? extends Maybe<? extends S>> former, Function<? super S, ? extends Maybe<? extends R>> latter) {
+        return value -> former.apply(value).flatMap(latter);
+    }
+
+    public static <T, R> Function<Maybe<T>, Maybe<R>> lift(Function<? super T, ? extends R> function) {
+        return maybe -> maybe.map(function);
+    }
+
+    public static <T, R> Function<Maybe<T>, Maybe<R>> applicative(Maybe<? extends Function<? super T, ? extends R>> function) {
+        return maybe -> function.flatMap(maybe::map);
+    }
+
     private static class Just<T> extends Maybe<T> {
 
         private final T value;

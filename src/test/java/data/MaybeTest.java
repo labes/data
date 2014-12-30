@@ -160,6 +160,99 @@ public class MaybeTest {
     }
 
     @Test
+    public void composedFunctionPassesItsArgumentToTheFormerFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Maybe.compose(value -> {
+            capture.set(value);
+            return nothing;
+        }, value -> null).apply(VALUE);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void composedFunctionDoesNotApplyTheLatterOneWhenTheResultOfTheFormerFunctionIsNothing() {
+        Maybe.compose(value -> nothing, value -> {
+            throw new IllegalStateException();
+        }).apply(VALUE);
+    }
+
+    @Test
+    public void composedFunctionAppliesToTheLatterOneTheResultContainedByTheMaybeReturnedByTheFormerFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Maybe.compose(value -> just, value -> {
+            capture.set(value);
+            return null;
+        }).apply(new Object());
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void composedFunctionReturnsNothingWhenTheResultOfTheFormerFunctionIsNothing() {
+        Assert.assertEquals(nothing, Maybe.compose(value -> nothing, value -> just).apply(new Object()));
+    }
+
+    @Test
+    public void composedFunctionReturnsTheResultOfTheLatterOneWhenTheResultOfTheFormerFunctionIsJust() {
+        final Maybe<Object> result = Maybe.just(new Object());
+        Assert.assertEquals(result, Maybe.compose(value -> just, value -> result).apply(new Object()));
+    }
+
+    @Test
+    public void liftedFunctionOnNothingDoesNotApplyThePureFunction() {
+        Maybe.lift(value -> {
+            throw new IllegalStateException();
+        }).apply(nothing);
+    }
+
+    @Test
+    public void liftedFunctionOnJustPassesItsArgumentToThePureFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Maybe.lift(capture::getAndSet).apply(just);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void liftedFunctionOnNothingReturnsNothing() {
+        Assert.assertEquals(nothing, Maybe.lift(value -> null).apply(nothing));
+    }
+
+    @Test
+    public void liftedFunctionOnJustReturnsJustTheResult() {
+        final Object result = new Object();
+        Assert.assertEquals(Maybe.just(result), Maybe.lift(value -> result).apply(just));
+    }
+
+    @Test
+    public void applicativeOnNothingReturnsAFunctionThatAlwaysReturnsNothing() {
+        Assert.assertEquals(nothing, Maybe.applicative(Maybe.nothing()).apply(just));
+    }
+
+    @Test
+    public void applicativeOnJustReturnsAFunctionThatOnNothingDoesNotApplyThePureFunction() {
+        Maybe.applicative(Maybe.just(value -> {
+            throw new IllegalStateException();
+        })).apply(nothing);
+    }
+
+    @Test
+    public void applicativeOnJustReturnsAFunctionThatOnJustAppliesTheContainedValueToThePureFunction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        Maybe.applicative(Maybe.just(capture::getAndSet)).apply(just);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void applicativeOnJustReturnsAFunctionThatOnNothingReturnsNothing() {
+        Assert.assertEquals(nothing, Maybe.applicative(Maybe.just(value -> null)).apply(nothing));
+    }
+
+    @Test
+    public void applicativeOnJustReturnsAFunctionThatOnJustReturnsJustThePureFunctionResult() {
+        final Object result = new Object();
+        Assert.assertEquals(Maybe.just(result), Maybe.applicative(Maybe.just(value -> result)).apply(just));
+    }
+
+    @Test
     public void nothingsAreEqual() {
         Assert.assertTrue(Maybe.nothing().equals(Maybe.nothing()));
     }
