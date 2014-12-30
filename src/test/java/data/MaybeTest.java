@@ -34,4 +34,29 @@ public class MaybeTest {
         final Object result = new Object();
         Assert.assertEquals(result, just.fold(() -> null, value -> result));
     }
+
+    @Test
+    public void nothingsAreEqual() {
+        Assert.assertTrue(Maybe.nothing().equals(Maybe.nothing()));
+    }
+
+    @Test
+    public void justsAreEqualWhenContainingAnEqualValue() {
+        Assert.assertTrue(Maybe.just(VALUE).equals(Maybe.just(VALUE)));
+    }
+
+    @Test
+    public void justsAreNotEqualWhenContainingDifferentValues() {
+        Assert.assertFalse(Maybe.just(new Object()).equals(Maybe.just(new Object())));
+    }
+
+    @Test
+    public void justsAreEqualWhenContainingBothNull() {
+        Assert.assertTrue(Maybe.just(null).equals(Maybe.just(null)));
+    }
+
+    @Test
+    public void nothingIsNotEqualToJustNull() {
+        Assert.assertFalse(Maybe.nothing().equals(Maybe.just(null)));
+    }
 }
