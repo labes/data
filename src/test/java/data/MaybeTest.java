@@ -36,6 +36,61 @@ public class MaybeTest {
     }
 
     @Test
+    public void mapOnNothingReturnsNothing() {
+        Assert.assertEquals(nothing, nothing.map(value -> null));
+    }
+
+    @Test
+    public void mapOnJustPassesTheContainedValueToTheMapper() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        just.map(capture::getAndSet);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void mapOnJustReturnsJustTheResultOfTheMapper() {
+        final Object result = new Object();
+        Assert.assertEquals(Maybe.just(result), just.map(value -> result));
+    }
+
+    @Test
+    public void mapOnJustReturnsJustTheResultOfTheMapperEvenIfItIsNull() {
+        Assert.assertEquals(Maybe.just(null), just.map(value -> null));
+    }
+
+    @Test
+    public void flatMapOnNothingReturnsNothing() {
+        Assert.assertEquals(nothing, nothing.flatMap(value -> just));
+    }
+
+    @Test
+    public void flatMapOnJustPassesTheContainedValueToTheMapper() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        just.flatMap(value -> {
+            capture.set(value);
+            return null;
+        });
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void flatMapOnJustReturnsTheMaybeReturnedByTheMapper() {
+        final Maybe<Object> result = Maybe.just(new Object());
+        Assert.assertEquals(result, just.flatMap(value -> result));
+    }
+
+    @Test
+    public void joinOnNothingReturnsNothing() {
+        Assert.assertEquals(nothing, Maybe.join(Maybe.nothing()));
+    }
+
+    @Test
+    public void joinOnJustReturnsTheInnerMaybe() {
+        final Maybe<Object> inner = Maybe.just(new Object());
+        Assert.assertEquals(inner, Maybe.join(Maybe.just(inner)));
+    }
+
+    @Test
     public void nothingsAreEqual() {
         Assert.assertTrue(Maybe.nothing().equals(Maybe.nothing()));
     }

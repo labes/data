@@ -20,6 +20,14 @@ public abstract class Maybe<T> {
 
     public abstract <R> R fold(Supplier<? extends R> onNothing, Function<? super T, ? extends R> onJust);
 
+    public abstract <R> Maybe<R> map(Function<? super T, ? extends R> mapper);
+
+    public abstract <R> Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper);
+
+    public static <T> Maybe<T> join(Maybe<? extends Maybe<? extends T>> maybe) {
+        return maybe.flatMap(Function.<Maybe<? extends T>>identity());
+    }
+
     private static class Just<T> extends Maybe<T> {
 
         private final T value;
@@ -31,6 +39,17 @@ public abstract class Maybe<T> {
         @Override
         public <R> R fold(Supplier<? extends R> onNothing, Function<? super T, ? extends R> onJust) {
             return onJust.apply(value);
+        }
+
+        @Override
+        public <R> Maybe<R> map(Function<? super T, ? extends R> mapper) {
+            return new Just<>(mapper.apply(value));
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <R> Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper) {
+            return (Maybe<R>) mapper.apply(value);
         }
 
         @Override
@@ -61,6 +80,16 @@ public abstract class Maybe<T> {
         @Override
         public Object fold(Supplier onNothing, Function onJust) {
             return onNothing.get();
+        }
+
+        @Override
+        public Maybe map(Function mapper) {
+            return this;
+        }
+
+        @Override
+        public Maybe flatMap(Function mapper) {
+            return this;
         }
 
         @Override
