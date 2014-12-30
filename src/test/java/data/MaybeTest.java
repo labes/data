@@ -36,6 +36,75 @@ public class MaybeTest {
     }
 
     @Test
+    public void justHasValue() {
+        Assert.assertTrue(just.hasValue());
+    }
+
+    @Test
+    public void nothingHasNotValue() {
+        Assert.assertFalse(nothing.hasValue());
+    }
+
+    @Test
+    public void orElseOnNothingReturnsTheAlternative() {
+        final Object alternative = new Object();
+        Assert.assertEquals(alternative, nothing.orElse(alternative));
+    }
+
+    @Test
+    public void orElseOnJustReturnsTheContainedValue() {
+        Assert.assertEquals(VALUE, just.orElse(new Object()));
+    }
+
+    @Test
+    public void orElseWithSupplierOnNothingReturnsTheSuppliedAlternative() {
+        final Object alternative = new Object();
+        Assert.assertEquals(alternative, nothing.orElse(() -> alternative));
+    }
+
+    @Test
+    public void orElseWithSupplierOnJustReturnsTheContainedValue() {
+        Assert.assertEquals(VALUE, just.orElse(() -> new Object()));
+    }
+
+    @Test
+    public void orElseWithSupplierOnJustDoesNotCallTheAlternativeSupplier() {
+        just.orElse(() -> {
+            throw new IllegalStateException();
+        });
+    }
+
+    @Test
+    public void orMaybeOnNothingReturnsTheAlternative() {
+        final Maybe<Object> alternative = Maybe.just(new Object());
+        Assert.assertEquals(alternative, nothing.orMaybe(alternative));
+    }
+
+    @Test
+    public void orMaybeOnJustReturnsTheMaybeItself() {
+        final Maybe<Object> alternative = Maybe.just(new Object());
+        Assert.assertEquals(just, just.orMaybe(alternative));
+    }
+
+    @Test
+    public void orMaybeWithSupplierOnNothingReturnsTheSuppliedAlternative() {
+        final Maybe<Object> alternative = Maybe.just(new Object());
+        Assert.assertEquals(alternative, nothing.orMaybe(() -> alternative));
+    }
+
+    @Test
+    public void orMaybeWithSupplierOnJustReturnsTheMaybeItself() {
+        Assert.assertEquals(just, just.orMaybe(() -> Maybe.just(new Object())));
+    }
+
+    @Test
+    public void orMaybeWithSupplierOnJustDoesNotCallTheAlternativeSupplier() {
+        just.orMaybe(() -> {
+            throw new IllegalStateException();
+        });
+    }
+
+    @Test
     public void mapOnNothingReturnsNothing() {
         Assert.assertEquals(nothing, nothing.map(value -> null));
     }

@@ -20,6 +20,16 @@ public abstract class Maybe<T> {
 
     public abstract <R> R fold(Supplier<? extends R> onNothing, Function<? super T, ? extends R> onJust);
 
+    public abstract boolean hasValue();
+
+    public abstract T orElse(T alternative);
+
+    public abstract T orElse(Supplier<? extends T> alternative);
+
+    public abstract Maybe<T> orMaybe(Maybe<? extends T> alternative);
+
+    public abstract Maybe<T> orMaybe(Supplier<? extends Maybe<? extends T>> alternative);
+
     public abstract <R> Maybe<R> map(Function<? super T, ? extends R> mapper);
 
     public abstract <R> Maybe<R> flatMap(Function<? super T, ? extends Maybe<? extends R>> mapper);
@@ -39,6 +49,31 @@ public abstract class Maybe<T> {
         @Override
         public <R> R fold(Supplier<? extends R> onNothing, Function<? super T, ? extends R> onJust) {
             return onJust.apply(value);
+        }
+
+        @Override
+        public boolean hasValue() {
+            return true;
+        }
+
+        @Override
+        public T orElse(T alternative) {
+            return value;
+        }
+
+        @Override
+        public T orElse(Supplier<? extends T> alternative) {
+            return value;
+        }
+
+        @Override
+        public Maybe<T> orMaybe(Maybe<? extends T> alternative) {
+            return this;
+        }
+
+        @Override
+        public Maybe<T> orMaybe(Supplier<? extends Maybe<? extends T>> alternative) {
+            return this;
         }
 
         @Override
@@ -80,6 +115,31 @@ public abstract class Maybe<T> {
         @Override
         public Object fold(Supplier onNothing, Function onJust) {
             return onNothing.get();
+        }
+
+        @Override
+        public boolean hasValue() {
+            return false;
+        }
+
+        @Override
+        public Object orElse(Object alternative) {
+            return alternative;
+        }
+
+        @Override
+        public Object orElse(Supplier alternative) {
+            return alternative.get();
+        }
+
+        @Override
+        public Maybe orMaybe(Maybe alternative) {
+            return alternative;
+        }
+
+        @Override
+        public Maybe orMaybe(Supplier alternative) {
+            return (Maybe) alternative.get();
         }
 
         @Override
