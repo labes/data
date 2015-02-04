@@ -1,5 +1,6 @@
 package data;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,6 +34,34 @@ public class MaybeTest {
     public void foldOnJustReturnsTheResultOfTheMapper() {
         final Object result = new Object();
         Assert.assertEquals(result, just.fold(value -> result, () -> null));
+    }
+
+    @Test
+    public void applyOnJustPassesTheContainedValueToTheAction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        just.apply(capture::getAndSet);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void binaryApplyOnJustPassesTheContainedValueToTheAction() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        just.apply(capture::getAndSet, this::noop);
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void binaryApplyOnJustDoesNotRunTheOnNothingAction() {
+        final AtomicBoolean run = new AtomicBoolean(false);
+        just.apply(this::noop, () -> run.set(true));
+        Assert.assertFalse(run.get());
+    }
+
+    @Test
+    public void binaryApplyOnNothingRunsTheOnNothingAction() {
+        final AtomicBoolean run = new AtomicBoolean(false);
+        nothing.apply(this::noop, () -> run.set(true));
+        Assert.assertTrue(run.get());
     }
 
     @Test
@@ -74,7 +103,7 @@ public class MaybeTest {
 
     @Test
     public void orElseWithSupplierOnJustReturnsTheContainedValue() {
-        Assert.assertEquals(VALUE, just.orElse(() -> new Object()));
+        Assert.assertEquals(VALUE, just.orElse(Object::new));
     }
 
     @Test
@@ -310,5 +339,11 @@ public class MaybeTest {
     @Test
     public void nothingIsNotEqualToJustNull() {
         Assert.assertFalse(Maybe.nothing().equals(Maybe.just(null)));
+    }
+
+    private void noop() {
+    }
+
+    private <T> void noop(T ignored) {
     }
 }

@@ -1,6 +1,7 @@
 package data;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -20,6 +21,10 @@ public abstract class Maybe<T> {
     }
 
     public abstract <R> R fold(Function<? super T, ? extends R> onValue, Supplier<? extends R> onNothing);
+
+    public abstract void apply(Consumer<? super T> onValue);
+
+    public abstract void apply(Consumer<? super T> onValue, Runnable onNothing);
 
     public abstract boolean hasValue();
 
@@ -71,6 +76,16 @@ public abstract class Maybe<T> {
         @Override
         public <R> R fold(Function<? super T, ? extends R> onValue, Supplier<? extends R> onNothing) {
             return onValue.apply(value);
+        }
+
+        @Override
+        public void apply(Consumer<? super T> onValue) {
+            onValue.accept(value);
+        }
+
+        @Override
+        public void apply(Consumer<? super T> onValue, Runnable onNothing) {
+            onValue.accept(value);
         }
 
         @Override
@@ -148,6 +163,15 @@ public abstract class Maybe<T> {
         @Override
         public Object fold(Function onValue, Supplier onNothing) {
             return onNothing.get();
+        }
+
+        @Override
+        public void apply(Consumer onValue) {
+        }
+
+        @Override
+        public void apply(Consumer onValue, Runnable onNothing) {
+            onNothing.run();
         }
 
         @Override
