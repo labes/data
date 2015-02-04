@@ -89,6 +89,6 @@ public class Pair<L, R> {
 
     @Override
     public String toString() {
-        return new StringBuilder("(").append(left).append(',').append(right).append(')').toString();
+        return "(" + left + ',' + right + ')';
     }
 }
