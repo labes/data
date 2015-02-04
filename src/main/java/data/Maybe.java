@@ -18,7 +18,7 @@ public abstract class Maybe<T> {
         return NOTHING;
     }
 
-    public abstract <R> R fold(Supplier<? extends R> onNothing, Function<? super T, ? extends R> onJust);
+    public abstract <R> R fold(Function<? super T, ? extends R> onValue, Supplier<? extends R> onNothing);
 
     public abstract boolean hasValue();
 
@@ -64,8 +64,8 @@ public abstract class Maybe<T> {
         }
 
         @Override
-        public <R> R fold(Supplier<? extends R> onNothing, Function<? super T, ? extends R> onJust) {
-            return onJust.apply(value);
+        public <R> R fold(Function<? super T, ? extends R> onValue, Supplier<? extends R> onNothing) {
+            return onValue.apply(value);
         }
 
         @Override
@@ -130,7 +130,7 @@ public abstract class Maybe<T> {
     private static final Maybe NOTHING = new Maybe() {
 
         @Override
-        public Object fold(Supplier onNothing, Function onJust) {
+        public Object fold(Function onValue, Supplier onNothing) {
             return onNothing.get();
         }
 

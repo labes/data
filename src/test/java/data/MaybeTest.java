@@ -19,20 +19,20 @@ public class MaybeTest {
     @Test
     public void foldOnJustPassesTheContainedValueToTheMapper() {
         final AtomicReference<Object> capture = new AtomicReference<>();
-        just.fold(() -> null, capture::getAndSet);
+        just.fold(capture::getAndSet, () -> null);
         Assert.assertEquals(VALUE, capture.get());
     }
 
     @Test
     public void foldOnNothingReturnsTheResultOfTheSupplier() {
         final Object result = new Object();
-        Assert.assertEquals(result, nothing.fold(() -> result, value -> null));
+        Assert.assertEquals(result, nothing.fold(value -> null, () -> result));
     }
 
     @Test
     public void foldOnJustReturnsTheResultOfTheMapper() {
         final Object result = new Object();
-        Assert.assertEquals(result, just.fold(() -> null, value -> result));
+        Assert.assertEquals(result, just.fold(value -> result, () -> null));
     }
 
     @Test
