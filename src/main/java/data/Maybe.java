@@ -23,6 +23,8 @@ public abstract class Maybe<T> {
 
     public abstract boolean hasValue();
 
+    public abstract boolean isNothing();
+
     public abstract T orElse(T alternative);
 
     public abstract T orElse(Supplier<? extends T> alternative);
@@ -74,6 +76,11 @@ public abstract class Maybe<T> {
         @Override
         public boolean hasValue() {
             return true;
+        }
+
+        @Override
+        public boolean isNothing() {
+            return false;
         }
 
         @Override
@@ -146,6 +153,11 @@ public abstract class Maybe<T> {
         @Override
         public boolean hasValue() {
             return false;
+        }
+
+        @Override
+        public boolean isNothing() {
+            return true;
         }
 
         @Override

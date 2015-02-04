@@ -46,6 +46,16 @@ public class MaybeTest {
     }
 
     @Test
+    public void justIsNotNothing() {
+        Assert.assertFalse(just.isNothing());
+    }
+
+    @Test
+    public void nothingIsNothing() {
+        Assert.assertTrue(nothing.isNothing());
+    }
+
+    @Test
     public void orElseOnNothingReturnsTheAlternative() {
         final Object alternative = new Object();
         Assert.assertEquals(alternative, nothing.orElse(alternative));
