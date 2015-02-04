@@ -105,6 +105,31 @@ public class MaybeTest {
     }
 
     @Test
+    public void filterOnNothingReturnsNothing() {
+        Assert.assertEquals(nothing, nothing.filter(value -> true));
+    }
+
+    @Test
+    public void filterOnJustPassesTheContainedValueToThePredicate() {
+        final AtomicReference<Object> capture = new AtomicReference<>();
+        just.filter(value -> {
+            capture.set(value);
+            return true;
+        });
+        Assert.assertEquals(VALUE, capture.get());
+    }
+
+    @Test
+    public void filterOnJustReturnsJustTheValueIfItPassesThePredicateTest() {
+        Assert.assertEquals(Maybe.just(VALUE), just.filter(value -> true));
+    }
+
+    @Test
+    public void filterOnJustReturnsNothingIfTheValueDoesNotPassThePredicateTest() {
+        Assert.assertEquals(nothing, just.filter(value -> false));
+    }
+
+    @Test
     public void mapOnNothingReturnsNothing() {
         Assert.assertEquals(nothing, nothing.map(value -> null));
     }

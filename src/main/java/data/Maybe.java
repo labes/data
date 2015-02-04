@@ -2,6 +2,7 @@ package data;
 
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class Maybe<T> {
@@ -29,6 +30,8 @@ public abstract class Maybe<T> {
     public abstract Maybe<T> orMaybe(Maybe<? extends T> alternative);
 
     public abstract Maybe<T> orMaybe(Supplier<? extends Maybe<? extends T>> alternative);
+
+    public abstract Maybe<T> filter(Predicate<? super T> filter);
 
     public abstract <R> Maybe<R> map(Function<? super T, ? extends R> mapper);
 
@@ -91,6 +94,12 @@ public abstract class Maybe<T> {
         @Override
         public Maybe<T> orMaybe(Supplier<? extends Maybe<? extends T>> alternative) {
             return this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Maybe<T> filter(Predicate<? super T> filter) {
+            return filter.test(value) ? this : NOTHING;
         }
 
         @Override
@@ -157,6 +166,11 @@ public abstract class Maybe<T> {
         @Override
         public Maybe orMaybe(Supplier alternative) {
             return (Maybe) alternative.get();
+        }
+
+        @Override
+        public Maybe filter(Predicate filter) {
+            return this;
         }
 
         @Override
